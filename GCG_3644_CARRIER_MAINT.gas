@@ -1,0 +1,327 @@
+Program.Sub.ScreenSU.Start
+gui.SS_Form1..create
+gui.SS_Form1..caption("Carrier Maintenance")
+gui.SS_Form1..size(4020,5235)
+gui.SS_Form1..minx(0)
+gui.SS_Form1..miny(0)
+gui.SS_Form1..position(0,0)
+gui.SS_Form1..event(unload,SS_Form1_Unload)
+gui.SS_Form1..alwaysontop(False)
+gui.SS_Form1..fontname("Arial")
+gui.SS_Form1..fontsize(8)
+gui.SS_Form1..forecolor(0)
+gui.SS_Form1..fontstyle(,,,,)
+gui.SS_Form1..BackColor(-2147483633)
+gui.SS_Form1..controlbox(True)
+gui.SS_Form1..maxbutton(False)
+gui.SS_Form1..minbutton(False)
+gui.SS_Form1..mousepointer(0)
+gui.SS_Form1..moveable(True)
+gui.SS_Form1..sizeable(False)
+gui.SS_Form1..ShowInTaskBar(True)
+gui.SS_Form1..titlebar(True)
+gui.SS_Form1.lbl_ddlCompany.create(label,"Select Company",True,1800,195,1,105,135,True,0,Arial,8,-2147483633,0)
+gui.SS_Form1.lbl_ddlCompany.defaultvalue("")
+gui.SS_Form1.lbl_ddlCompany.controlgroup(0)
+gui.SS_Form1.ddlCompany.create(dropdownlist)
+gui.SS_Form1.ddlCompany.visible(True)
+gui.SS_Form1.ddlCompany.size(1800,330)
+gui.SS_Form1.ddlCompany.zorder(0)
+gui.SS_Form1.ddlCompany.position(100,335)
+gui.SS_Form1.ddlCompany.enabled(True)
+gui.SS_Form1.ddlCompany.fontname("Arial")
+gui.SS_Form1.ddlCompany.fontsize(8)
+gui.SS_Form1.ddlCompany.event(click,ddlCompany_Change)
+gui.SS_Form1.ddlCompany.defaultvalue("")
+gui.SS_Form1.ddlCompany.controlgroup(0)
+gui.SS_Form1.lbl_txtCarrier.create(label,"Carrier",True,1800,200,1,100,750,True,0,Arial,8,-2147483633,0)
+gui.SS_Form1.lbl_txtCarrier.defaultvalue("")
+gui.SS_Form1.lbl_txtCarrier.controlgroup(0)
+gui.SS_Form1.txtCarrier.create(textbox,"",True,1800,330,0,100,950,True,0,Arial,8,16777215,1)
+gui.SS_Form1.txtCarrier.maxLength(6)
+gui.SS_Form1.txtCarrier.defaultvalue("")
+gui.SS_Form1.txtCarrier.controlgroup(0)
+gui.SS_Form1.cmdAdd.create(button)
+gui.SS_Form1.cmdAdd.caption("Add")
+gui.SS_Form1.cmdAdd.visible(True)
+gui.SS_Form1.cmdAdd.size(1000,360)
+gui.SS_Form1.cmdAdd.zorder(0)
+gui.SS_Form1.cmdAdd.position(100,1365)
+gui.SS_Form1.cmdAdd.enabled(True)
+gui.SS_Form1.cmdAdd.fontname("Arial")
+gui.SS_Form1.cmdAdd.fontsize(8)
+gui.SS_Form1.cmdAdd.event(click,cmdadd_click)
+gui.SS_Form1.cmdAdd.defaultvalue("")
+gui.SS_Form1.cmdAdd.controlgroup(0)
+gui.SS_Form1.cmdDelete.create(button)
+gui.SS_Form1.cmdDelete.caption("Delete")
+gui.SS_Form1.cmdDelete.visible(True)
+gui.SS_Form1.cmdDelete.size(1005,360)
+gui.SS_Form1.cmdDelete.zorder(0)
+gui.SS_Form1.cmdDelete.position(100,4155)
+gui.SS_Form1.cmdDelete.enabled(True)
+gui.SS_Form1.cmdDelete.fontname("Arial")
+gui.SS_Form1.cmdDelete.fontsize(8)
+gui.SS_Form1.cmdDelete.event(click,cmddelete_click)
+gui.SS_Form1.cmdDelete.defaultvalue("")
+gui.SS_Form1.cmdDelete.controlgroup(0)
+gui.SS_Form1.lbl_lvwCarrier.create(label,"Carriers",True,1800,200,1,100,1115,True,0,Arial,8,-2147483633,0)
+gui.SS_Form1.lbl_lvwCarrier.defaultvalue("")
+gui.SS_Form1.lbl_lvwCarrier.controlgroup(0)
+gui.SS_Form1.lvwCarrier.create(listview)
+gui.SS_Form1.lvwCarrier.view(3)
+gui.SS_Form1.lvwCarrier.addlistviewcolumn("Carriers",3000,0)
+gui.SS_Form1.lvwCarrier.visible(True)
+gui.SS_Form1.lvwCarrier.size(3600,2205)
+gui.SS_Form1.lvwCarrier.zorder(0)
+gui.SS_Form1.lvwCarrier.position(105,1845)
+gui.SS_Form1.lvwCarrier.enabled(True)
+gui.SS_Form1.lvwCarrier.borderstyle(1)
+gui.SS_Form1.lvwCarrier.fontname("Arial")
+gui.SS_Form1.lvwCarrier.fontsize(8)
+gui.SS_Form1.lvwCarrier.event(itemclick,lvwCarrier_ItemClick)
+gui.SS_Form1.cmdClr.create(button)
+gui.SS_Form1.cmdClr.caption("Clear")
+gui.SS_Form1.cmdClr.visible(True)
+gui.SS_Form1.cmdClr.size(1000,360)
+gui.SS_Form1.cmdClr.zorder(0)
+gui.SS_Form1.cmdClr.position(1310,1365)
+gui.SS_Form1.cmdClr.enabled(True)
+gui.SS_Form1.cmdClr.fontname("Arial")
+gui.SS_Form1.cmdClr.fontsize(8)
+gui.SS_Form1.cmdClr.event(click,cmdclr_click)
+gui.SS_Form1.cmdClr.defaultvalue("")
+gui.SS_Form1.cmdClr.controlgroup(0)
+gui.SS_Form1.ddlCompany.tabstop(True)
+gui.SS_Form1.ddlCompany.tabindex(1)
+gui.SS_Form1.txtCarrier.tabstop(True)
+gui.SS_Form1.txtCarrier.tabindex(2)
+gui.SS_Form1.cmdAdd.tabstop(True)
+gui.SS_Form1.cmdAdd.tabindex(3)
+gui.SS_Form1.cmdDelete.tabstop(True)
+gui.SS_Form1.cmdDelete.tabindex(4)
+gui.SS_Form1.lvwCarrier.tabstop(True)
+gui.SS_Form1.lvwCarrier.tabindex(5)
+
+
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Variable.Global.sKey.Declare(String)
+Variable.Global.iOrd.Declare(Long,0)
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!Con.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+
+'add fedex as 0 and ups as 1
+Gui.SS_Form1.ddlCompany.AddItem("FedEx",0)
+Gui.SS_Form1.ddlCompany.AddItem("UPS",1)
+
+Gui.SS_Form1..Visible(true)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_CARRIER_MAINT.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Ss_form1_unload)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.Main.End
+
+Program.Sub.SS_Form1_Unload.Start
+F.Intrinsic.Control.SetErrorHandler("SS_Form1_Unload_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+f.ODBC.Connection!Con.Close
+f.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("SS_Form1_Unload_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_CARRIER_MAINT.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.End
+
+Function.Intrinsic.Control.EndIf
+Program.Sub.SS_Form1_Unload.End
+
+Program.Sub.ddlCompany_Change.Start
+F.Intrinsic.Control.SetErrorHandler("ddlCompany_Change_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Clears the list view before adding new ones to it.
+Gui.SS_Form1.lvwCarrier.ClearItems
+
+F.Intrinsic.Control.If(V.Screen.SS_Form1!ddlCompany.ListIndex,=,0)
+	'FedEx was selected
+	F.ODBC.Connection!Con.OpenLocalRecordsetRO("rstOpen","SELECT REC_ID, CARRIER FROM GCG_CARRIER_CHECK WHERE COMPANY = '0' ORDER BY REC_ID ASC")
+	F.Intrinsic.Control.If(V.ODBC.Con!rstOpen.EOF,=,False)
+		F.Intrinsic.Control.DoUntil(V.ODBC.Con!rstOpen.EOF,=,True)
+			Gui.SS_Form1.lvwCarrier.AddListItem(V.ODBC.Con!rstOpen.FieldValTrim!REC_ID,V.ODBC.Con!rstOpen.FieldValTrim!CARRIER)
+			F.ODBC.Con!rstOpen.MoveNext
+		F.Intrinsic.Control.Loop
+	F.Intrinsic.Control.EndIf
+	F.ODBC.Con!rstOpen.Close
+F.Intrinsic.Control.Else
+	'UPS was selected
+	F.ODBC.Connection!Con.OpenLocalRecordsetRO("rstOpen","SELECT REC_ID, CARRIER FROM GCG_CARRIER_CHECK WHERE COMPANY = '1' ORDER BY REC_ID ASC")
+	F.Intrinsic.Control.If(V.ODBC.Con!rstOpen.EOF,=,False)
+		F.Intrinsic.Control.DoUntil(V.ODBC.Con!rstOpen.EOF,=,True)
+			Gui.SS_Form1.lvwCarrier.AddListItem(V.ODBC.Con!rstOpen.FieldValTrim!REC_ID,V.ODBC.Con!rstOpen.FieldValTrim!CARRIER)
+			F.ODBC.Con!rstOpen.MoveNext
+		F.Intrinsic.Control.Loop
+	F.Intrinsic.Control.EndIf
+	F.ODBC.Con!rstOpen.Close
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("ddlCompany_Change_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_CARRIER_MAINT.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Ss_form1_unload)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.ddlCompany_Change.End
+
+Program.Sub.lvwCarrier_ItemClick.Start
+F.Intrinsic.Control.SetErrorHandler("lvwCarrier_ItemClick_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.iCarrier.Declare(Long)
+
+'an item was clicked in the list view. add it to the text box
+Gui.SS_Form1.lvwCarrier.RetrieveItemOrdinal(V.Args.ITEMKEY,V.Local.iCarrier)
+Gui.SS_Form1.txtCarrier.Text(V.Screen.SS_Form1!lvwCarrier.ListItemText(V.Local.iCarrier))
+V.Global.sKey.Set(V.Args.ITEMKEY)
+V.Global.iOrd.Set(V.Local.iCarrier)
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("lvwCarrier_ItemClick_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_CARRIER_MAINT.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Ss_form1_unload)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.lvwCarrier_ItemClick.End
+
+program.sub.cmdadd_click.start
+F.Intrinsic.Control.SetErrorHandler("cmdadd_click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.iKey.Declare(Long)
+V.Local.sSQL.Declare(String)
+
+F.Intrinsic.Control.If(V.Global.sKey,<>,"")
+	Gui.SS_Form1.lvwCarrier.RemoveItem(V.Global.sKey.Long)
+	Gui.SS_Form1.lvwCarrier.AddListItem(V.Global.sKey,V.Screen.SS_Form1!txtCarrier.Text)
+	F.Intrinsic.String.Build("UPDATE GCG_CARRIER_CHECK SET CARRIER = '{0}' WHERE REC_ID = '{1}' AND COMPANY = '{2}' ",V.Screen.SS_Form1!txtCarrier.Text.Trim,V.Global.sKey,V.Screen.SS_Form1!ddlCompany.ListIndex,V.Local.sSQL)
+	F.ODBC.Connection!Con.Execute(V.Local.sSQL)
+	V.Global.sKey.Set("")
+	V.Global.iOrd.Set(-1)
+	Gui.SS_Form1.txtCarrier.Text("")
+F.Intrinsic.Control.Else
+	f.ODBC.Connection!Con.GetID("GCG_CARRIER_CHECK","REC_ID",TRUE,V.Local.iKey)
+	Gui.SS_Form1.lvwCarrier.AddListItem(V.Local.iKey,V.Screen.SS_Form1!txtCarrier.Text)
+	F.Intrinsic.String.Build("INSERT INTO GCG_CARRIER_CHECK VALUES({0},'{1}',{2}) ",V.Local.iKey,V.Screen.SS_Form1!txtCarrier.Text.Trim,V.Screen.SS_Form1!ddlCompany.ListIndex,V.Local.sSQL)
+	F.ODBC.Connection!Con.Execute(V.Local.sSQL)
+	Gui.SS_Form1.txtCarrier.Text("")
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdadd_click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_CARRIER_MAINT.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Ss_form1_unload)
+Function.Intrinsic.Control.EndIf
+
+
+program.sub.cmdadd_click.end
+
+program.sub.cmddelete_click.start
+F.Intrinsic.Control.SetErrorHandler("cmddelete_click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sSQL.Declare(String)
+
+'deleting the selected item from table
+F.Intrinsic.String.Build("DELETE FROM GCG_CARRIER_CHECK WHERE REC_ID = '{0}' AND CARRIER = '{1}' AND COMPANY = '{2}' ",V.Global.sKey,V.Screen.SS_Form1!txtCarrier.Text,V.Screen.SS_Form1!ddlCompany.ListIndex,V.Local.sSQL)
+F.ODBC.Connection!Con.Execute(V.Local.sSQL)
+
+Gui.SS_Form1.lvwCarrier.RemoveItem(V.Global.sKey.Long)
+Gui.SS_Form1.txtCarrier.Text("")
+V.Global.sKey.Set("")
+V.Global.iOrd.Set(-1)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmddelete_click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_CARRIER_MAINT.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Ss_form1_unload)
+Function.Intrinsic.Control.EndIf
+
+
+program.sub.cmddelete_click.end
+
+program.sub.cmdclr_click.start
+F.Intrinsic.Control.SetErrorHandler("cmdclr_click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+V.Global.sKey.Set("")
+V.Global.iOrd.Set(-1)
+
+Gui.SS_Form1.txtCarrier.Text("")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdclr_click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_CARRIER_MAINT.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Ss_form1_unload)
+Function.Intrinsic.Control.EndIf
+
+
+program.sub.cmdclr_click.end
+
+Program.Sub.Comments.Start
+${$0$}$GCG_3644_CARRIER_MAINT$}$Strider$}$4/13/2016 10:12:57 AM
+${$3$}$0$}$$}$0$}$-1$}$$}$12:00:00 AM$}$Maintenance program for Carrier Check so that they can keep track of the carriers and the consolidated gab program can check to see if the account is correct.
+Program.Sub.Comments.End
+Program.Sub.ScreenSS.Start
+SS_Form1{{CAPTION::Carrier Maintenance
+SS_Form1.CTRL{{NAME::ddlCompany\\TYPE::4\\CAPTION::Select Company\\TABSTOP::1\\GROUP::-1\\BROWSER::0\\SIZE::1
+SS_Form1.CTRL{{NAME::txtCarrier\\TYPE::2\\CAPTION::Carrier\\TABSTOP::2\\GROUP::-1\\BROWSER::0\\SIZE::1
+SS_Form1.CTRL{{NAME::cmdAdd\\TYPE::5\\CAPTION::Add\\TABSTOP::3\\GROUP::-1\\BROWSER::0\\SIZE::1
+SS_Form1.CTRL{{NAME::cmdDelete\\TYPE::5\\CAPTION::Delete\\TABSTOP::4\\GROUP::-1\\BROWSER::0\\SIZE::1
+SS_Form1.CTRL{{NAME::lvwCarrier\\TYPE::7\\CAPTION::Carriers\\TABSTOP::5\\GROUP::-1\\BROWSER::0\\SIZE::1
+
+Program.Sub.ScreenSS.End
+
