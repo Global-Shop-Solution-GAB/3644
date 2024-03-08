@@ -1,0 +1,887 @@
+Program.Sub.ScreenSU.Start
+gui.F_Main..create
+gui.F_Main..caption("Inventory OnHand - Available")
+gui.F_Main..size(7935,1860)
+gui.F_Main..minx(0)
+gui.F_Main..miny(0)
+gui.F_Main..position(0,0)
+gui.F_Main..event(unload,Unload)
+gui.F_Main..alwaysontop(False)
+gui.F_Main..fontname("Arial")
+gui.F_Main..fontsize(8)
+gui.F_Main..forecolor(0)
+'gui.F_Main..fontstyle(,,,,)
+gui.F_Main..BackColor(-2147483633)
+gui.F_Main..controlbox(True)
+gui.F_Main..maxbutton(False)
+gui.F_Main..minbutton(False)
+gui.F_Main..mousepointer(0)
+gui.F_Main..moveable(True)
+gui.F_Main..sizeable(True)
+gui.F_Main..ShowInTaskBar(True)
+gui.F_Main..titlebar(True)
+gui.F_Main.lblOnHand.create(label,"ONHAND",True,795,255,1,435,545,True,0,Arial,8,-2147483633,0)
+gui.F_Main.lblOnHand.defaultvalue("")
+gui.F_Main.lblOnHand.controlgroup(0)
+gui.F_Main.lblConsigned.create(label,"CONSIGNED",True,945,255,1,1770,545,True,0,Arial,8,-2147483633,0)
+gui.F_Main.lblConsigned.defaultvalue("")
+gui.F_Main.lblConsigned.controlgroup(0)
+gui.F_Main.lblOnWorkOrder.create(label,"ON",True,1035,165,1,3220,350,True,2,Arial,8,-2147483633,0)
+gui.F_Main.lblOnWorkOrder.defaultvalue("")
+gui.F_Main.lblOnWorkOrder.controlgroup(0)
+gui.F_Main.lblSalesReq.create(label,"SALES REQ",True,1020,255,1,4665,545,True,0,Arial,8,-2147483633,0)
+gui.F_Main.lblSalesReq.defaultvalue("")
+gui.F_Main.lblSalesReq.controlgroup(0)
+gui.F_Main.lblAvailable.create(label,"AVAILABLE",True,990,255,1,6280,545,True,0,Arial,8,-2147483633,0)
+gui.F_Main.lblAvailable.defaultvalue("")
+gui.F_Main.lblAvailable.controlgroup(0)
+gui.F_Main.txtOnHand.create(textbox,"",True,1290,345,0,100,800,False,2,Arial,9,-2147483643,1)
+gui.F_Main.txtOnHand.defaultvalue("")
+gui.F_Main.txtOnHand.controlgroup(0)
+gui.F_Main.txtConsigned.create(textbox,"",True,1215,345,0,1625,800,False,2,Arial,9,-2147483643,1)
+gui.F_Main.txtConsigned.defaultvalue("")
+gui.F_Main.txtConsigned.controlgroup(0)
+gui.F_Main.txtOnWO.create(textbox,"",True,1215,345,0,3090,800,False,2,Arial,9,-2147483643,1)
+gui.F_Main.txtOnWO.defaultvalue("")
+gui.F_Main.txtOnWO.controlgroup(0)
+gui.F_Main.txtSalesReq.create(textbox,"",True,1215,345,0,4535,800,False,2,Arial,9,-2147483643,1)
+gui.F_Main.txtSalesReq.defaultvalue("")
+gui.F_Main.txtSalesReq.controlgroup(0)
+gui.F_Main.txtAvail.create(textbox,"",True,1215,345,0,6180,800,False,2,Arial,9,-2147483643,1)
+gui.F_Main.txtAvail.defaultvalue("")
+gui.F_Main.txtAvail.controlgroup(0)
+gui.F_Main.lblMinus.create(label,"-",True,150,255,1,5940,800,True,0,Arial,14,-2147483633,0)
+gui.F_Main.lblMinus.defaultvalue("")
+gui.F_Main.lblMinus.controlgroup(0)
+gui.F_Main.lblWO2.create(label,"WORK ORDER",True,1110,165,1,3175,545,True,2,Arial,8,-2147483633,0)
+gui.F_Main.lblWO2.defaultvalue("")
+gui.F_Main.lblWO2.controlgroup(0)
+
+
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Variable.Global.bWait.Declare(Boolean,False)
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!con.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+
+F.Intrinsic.Control.SelectCase(V.Caller.Hook)
+	F.Intrinsic.Control.Case(11560)
+		'Order Entry header populate hook
+		F.Intrinsic.Control.CallSub(Hook11560)
+	F.Intrinsic.Control.Case(11890)
+		'Order Entry header print button hook, use same logic as pre save hook
+		F.Intrinsic.Control.CallSub(Hook11890)
+	F.Intrinsic.Control.Case(11900)
+		'Order Entry header pre exit button
+		F.Intrinsic.Control.CallSub(Hook11900)
+	F.Intrinsic.Control.Case(12010)
+		'Order Entry lines populate hook
+		F.Intrinsic.Control.CallSub(Hook12010)
+	F.Intrinsic.Control.Case(12420)
+		'Order Entry lines script 2 button
+		F.Intrinsic.Control.CallSub(Hook12420)
+	F.Intrinsic.Control.Case(14045)
+		'Supply and Demand populate
+		F.Intrinsic.Control.CallSub(Hook14045)
+	F.Intrinsic.Control.Case(14080)
+		'Suplly and Demand script 2 button
+		F.Intrinsic.Control.CallSub(Hook14080)
+	F.Intrinsic.Control.Case(11931)
+		'Order Entry Change Order Hook
+		F.Intrinsic.Control.CallSub(Hook11560)
+	F.Intrinsic.Control.Case(11869)
+		'Order Entry Save button Hook
+		F.Intrinsic.Control.CallSub(Hook11869)
+	F.Intrinsic.Control.Case(11868)
+		'Order Entry Change Yes Button
+		F.Intrinsic.Control.CallSub(Hook11869)
+	f.Intrinsic.Control.Case(11872)
+		'call the 72 sub
+		f.Intrinsic.Control.CallSub(hook11872)
+	f.Intrinsic.Control.Case(11875)
+		'Clear hook
+		f.Intrinsic.Control.CallSub(Hook11875)	
+F.Intrinsic.Control.EndSelect
+
+F.Intrinsic.Control.If(V.Global.bWait,=,False)
+	F.Intrinsic.Control.CallSub(Unload)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Main.End
+
+Program.Sub.Unload.Start
+F.Intrinsic.Control.SetErrorHandler("Unload_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!con.Close
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Unload_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End
+
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Unload.End
+
+Program.Sub.Hook11560.Start
+F.Intrinsic.Control.SetErrorHandler("Hook11560_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'look at GCG_3644_HOOK_CONSOLIDAITON.gas this sets the script 2 and disables the dates
+'This sets focus to Customer PO
+F.Intrinsic.Control.If(V.Caller.Sync,=,False)
+	F.Intrinsic.Control.If(V.Passed.000003,<>,"")
+		f.Intrinsic.UI.Sleep(1)
+		F.Intrinsic.API.SetControlFocus(V.Passed.000025.HWnd)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.Else
+
+	'Setting Script 2 from GCG_3640_RightFax.gas
+	V.Passed.000202.Set("Fax Files")
+	'disabling dates from AJG_OE_TABSTOPS.gas
+	F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000023,"LOCK",1)
+	F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000024,"LOCK",1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook11560_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Hook11560.End
+
+Program.Sub.Hook12010.Start
+F.Intrinsic.Control.SetErrorHandler("Hook12010_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Formerly ShipToHide
+'Hiding Ship To
+F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000022,"HIDE",1)
+'Hiding Address Search on lines
+F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000067,"HIDE",1)
+'Hiding Ship To label
+F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000207,"HIDE",1)
+
+'Formerly GAB_INV_Sreq_Avail
+'Relabelling Script 2 button
+V.Passed.000141.Set("On Hand")
+
+'empty global so that we can save again
+V.Passed.GLOBAL.Set("")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook12010_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Hook12010.End
+
+Program.Sub.Hook11890.Start
+F.Intrinsic.Control.SetErrorHandler("Hook11890_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sCarrier.Declare(String)
+V.Local.sCarrierNumber.Declare(String)
+V.Local.sAccount.Declare(String)
+V.Local.sOrderNo.Declare(String)
+V.Local.sSql.Declare(String)
+
+'Getting Carrier and Account from Order header screen
+V.Local.sCarrier.Set(V.Passed.000094.Trim)
+V.Local.sAccount.Set(V.Passed.000165.Trim)
+
+'Formerly ATG_OE_Carrier_Checks
+'Checking to see if Carrier requires validation on account number
+F.Intrinsic.String.Build("Select CARRIER, COMPANY from GCG_Carrier_Check where CARRIER = '{0}'",V.Local.sCarrier,V.Local.sSql)
+F.ODBC.Connection!con.OpenLocalRecordsetRO("rst",V.Local.sSql)
+F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+	'Checking to be sure Account is not blank
+	F.Intrinsic.Control.If(V.Local.sAccount,=,"")
+		V.Passed.777777.Set(1)
+		F.Intrinsic.UI.Msgbox("Carrier Account cannot be blank.","Carrier Validation")
+		F.Intrinsic.Control.CallSub(Unload)
+	F.Intrinsic.Control.Else
+		'Check to see if UPS or Fedex and making sure Account number is formatted correctly, 0 - FedEx, 1 - UPS
+		F.Intrinsic.Control.If(V.ODBC.con!rst.FieldValLong!COMPANY,=,0)
+			'Fedex
+			F.Intrinsic.Control.If(V.Local.sAccount.Length,<>,9)
+				V.Passed.777777.Set(1)
+				F.Intrinsic.UI.Msgbox("Carrier Account must be 9 digits for FedEx.","Carrier Validation")
+				F.Intrinsic.Control.CallSub(Unload)
+			F.Intrinsic.Control.EndIf
+		F.Intrinsic.Control.Else
+			'UPS
+			F.Intrinsic.Control.If(V.Local.sAccount.Length,<>,6)
+				V.Passed.777777.Set(1)
+				F.Intrinsic.UI.Msgbox("Carrier Account must be 6 digits for UPS.","Carrier Validation")
+				F.Intrinsic.Control.CallSub(Unload)
+			F.Intrinsic.Control.EndIf
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndIf
+F.ODBC.con!rst.Close
+
+'Save the Carrier Account # to UF1
+F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sSQL)
+F.Intrinsic.String.Concat("SELECT * FROM ORDER_HEADER WHERE RECORD_TYPE='A' AND ORDER_NO='",V.Local.sSQL,"'",V.Local.sSQL)
+F.ODBC.Connection!con.OpenRecordsetRW("rst",V.Local.sSQL)
+F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,<>,True)
+	V.Local.sCarrierNumber.Set(V.Passed.000165)
+	F.ODBC.con!rst.Set!USER_1(V.Local.sCarrierNumber)
+	F.ODBC.con!rst.Update
+F.Intrinsic.Control.EndIf
+F.ODBC.con!rst.Close
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook11890_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Hook11890.End
+
+Program.Sub.Hook11900.Start
+F.Intrinsic.Control.SetErrorHandler("Hook11900_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sOrderNo.Declare(String)
+V.Local.sSql.Declare(String)
+V.Local.sMsg.Declare(String)
+V.Local.iReturn.Declare(Long)
+
+'Don't run if order number is 0
+F.Intrinsic.Control.If(V.Passed.000003,<>,"","AND",V.Caller.Switches,<>,"N",V.Caller.Switches,<>,"D")
+	'Getting Order number from screen
+	F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sOrderNo)
+
+	'check to see if Pick List has printed before
+	F.Intrinsic.String.Build("SELECT FLAG_PICKLIST FROM ORDER_HEADER WHERE ORDER_NO = '{0}' AND RECORD_TYPE = 'A' ",V.Local.sOrderNo,V.Local.sSql)
+	F.ODBC.Connection!con.OpenLocalRecordsetRW("rst",V.Local.sSql)
+	F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+		'check to see the print status
+		F.Intrinsic.Control.If(V.ODBC.con!rst.FieldValTrim!FLAG_PICKLIST,=,"Y")
+			'has been printed before, ask if they would like to reprint.
+			F.Intrinsic.String.Build("Order {0} has been sent to shipping before.{1}Would you like to send a pick list to shipping again?",V.Local.sOrderNo,V.Ambient.NewLine,V.Local.sMsg)
+		F.Intrinsic.Control.Else
+			'has not been sent before, ask to print
+			F.Intrinsic.String.Build("Order {0} has NOT been sent to shipping!{1}Would you like to send a pick list to shipping?",V.Local.sOrderNo,V.Ambient.NewLine,V.Local.sMsg)
+		F.Intrinsic.Control.EndIf
+	
+
+
+		F.Intrinsic.UI.Msgbox(V.Local.sMsg,"Pick List Print",4,V.Local.iReturn)
+		F.Intrinsic.Control.If(V.Local.iReturn,=,6)
+			'yes ship so set flag to N so it will be printed
+			F.ODBC.con!rst.Set!FLAG_PICKLIST("N")
+			F.ODBC.con!rst.Update
+			'build picklist setting for line too
+			F.Intrinsic.String.Build("SELECT PICK_LIST_PRINTED FROM ORDER_LINES WHERE ORDER_NO = '{0}' AND RECORD_TYPE = 'L' ",V.Local.sOrderNo,V.Local.sSql)
+			F.ODBC.Connection!con.OpenLocalRecordsetRW("rstLines",V.Local.sSql)
+			F.Intrinsic.Control.DoUntil(V.ODBC.con!rstLines.EOF,=,True)
+				F.ODBC.con!rstLines.Set!PICK_LIST_PRINTED("N")
+				F.ODBC.con!rstLines.Update
+				F.ODBC.con!rstLines.MoveNext
+			F.Intrinsic.Control.Loop
+			F.ODBC.con!rstLines.Close
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.EndIf
+	F.ODBC.con!rst.Close
+
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook11900_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Hook11900.End
+
+Program.Sub.Hook12420.Start
+F.Intrinsic.Control.SetErrorHandler("Hook12420_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Checking to be sure part selected
+F.Intrinsic.Control.If(V.Passed.000052,<>,"")
+	F.Intrinsic.Control.CallSub(Calconhand)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook12420_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Hook12420.End
+
+Program.Sub.CalcOnHand.Start
+F.Intrinsic.Control.SetErrorHandler("CalcOnHand_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sSql.Declare(String)
+V.Local.sPart.Declare(String)
+V.Local.sLoc.Declare(String)
+V.Local.fReq.Declare(Float)
+V.Local.fOnHandNew.Declare(Float)
+V.Local.fOnHand.Declare(Float)
+V.Local.fAvail.Declare(Float)
+
+'Putting together part number
+F.Intrinsic.Control.SelectCase(V.Caller.Hook)
+	F.Intrinsic.Control.Case(12420)
+		F.Intrinsic.String.GSSPartString(V.Passed.000052,V.Passed.000053,V.Local.sPart)
+		'Getting Loc
+		V.Local.sLoc.Set(V.Passed.000054)
+	F.Intrinsic.Control.Case(14080)
+		F.Intrinsic.String.GSSPartString(V.Passed.000003,V.Passed.000099,V.Local.sPart)
+		'Getting Loc
+		V.Local.sLoc.Set(V.Passed.000004)
+F.Intrinsic.Control.EndSelect
+
+F.Intrinsic.String.Build("Select QTY_ONHAND, QTY_ONORDER_WO, QTY_REQUIRED From V_INVENTORY_MSTR Where PART = '{0}' and LOCATION = '{1}'",V.Local.sPart,V.Local.sLoc,V.Local.sSql)
+F.ODBC.Connection!con.OpenLocalRecordsetRO("rstInv",V.Local.sSql)
+F.Intrinsic.Control.If(V.ODBC.con!rstInv.EOF,=,False)
+	V.Local.fOnHand.Set(V.ODBC.con!rstInv.FieldVal!QTY_ONHAND)
+	V.Local.fReq.Set(V.ODBC.con!rstInv.FieldVal!QTY_REQUIRED)
+	F.Intrinsic.Math.Sub(V.Local.fOnHand,V.Local.fReq,V.Local.fAvail)
+
+	F.Intrinsic.String.Build("Select SUM(QTY_SHIPPED) AS QTY_SHIPPED From SHIPMENT_CNSGND Where PART = '{0}' and LOCN = '{1}'",V.Local.sPart,V.Local.sLoc,V.Local.sSql)
+	F.ODBC.Connection!con.OpenLocalRecordsetRO("rstCnsg",V.Local.sSql)
+	F.Intrinsic.Control.If(V.ODBC.con!rstCnsg.FieldVal!QTY_SHIPPED,=,"")
+		Gui.F_Main.txtConsigned.Text("0")
+		V.Local.fOnHandNew.Set(V.Local.fOnHand)
+	F.Intrinsic.Control.Else
+		Gui.F_Main.txtConsigned.Text(V.ODBC.con!rstCnsg.FieldVal!QTY_SHIPPED)
+		F.Intrinsic.Math.Sub(V.Local.fOnHand,V.ODBC.con!rstCnsg.FieldVal!QTY_SHIPPED,V.Local.fOnHandNew)
+		F.Intrinsic.Math.Sub(V.Local.fReq,V.ODBC.con!rstCnsg.FieldVal!QTY_SHIPPED,V.Local.fReq)
+	F.Intrinsic.Control.Endif
+	
+	F.ODBC.con!rstCnsg.Close
+
+	Gui.F_Main.txtOnWO.Text(V.ODBC.con!rstInv.FieldVal!QTY_ONORDER_WO)
+	Gui.F_Main.txtSalesReq.Text(V.Local.fReq)
+	Gui.F_Main.txtAvail.Text(V.Local.fAvail)
+	Gui.F_Main.txtOnHand.Text(V.Local.fOnHandNew)
+
+	F.Intrinsic.String.Build("Select * From V_ORDER_LINES where PART = '{0}' and LOCATION = '{1}' and FLAG_USE_MQD = 'Y'",V.Local.sPart,V.Local.sLoc,V.Local.sSql)
+	F.ODBC.Connection!con.OpenLocalRecordsetRO("rstChkOL",V.Local.sSql)
+	F.Intrinsic.Control.If(V.ODBC.con!rstChkOL.EOF,=,False)
+		Gui.F_Main.lblSalesReq.Caption("SALES REQ*")
+		Gui.F_Main.lblSalesReq.ForeColor(V.Color.Red)
+	F.Intrinsic.Control.Endif
+	F.ODBC.con!rstChkOL.Close
+
+	'set bwait to True so that screen doesn't automatically close
+	V.Global.bWait.Set(True)
+	Gui.F_Main..Show
+F.Intrinsic.Control.EndIf
+F.ODBC.con!rstInv.Close
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("CalcOnHand_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.CalcOnHand.End
+
+Program.Sub.Hook14045.Start
+F.Intrinsic.Control.SetErrorHandler("Hook14045_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Setting Supply and Demand script 2 button text
+V.Passed.000190.Set("On Hand")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook14045_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Hook14045)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Hook14045.End
+
+Program.Sub.Hook14080.Start
+F.Intrinsic.Control.SetErrorHandler("Hook14080_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Checking to be sure part selected
+F.Intrinsic.Control.If(V.Passed.000003,<>,"")
+	F.Intrinsic.Control.CallSub(Calconhand)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook14080_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Hook14080.End
+
+Program.Sub.Hook11920.Start
+F.Intrinsic.Control.SetErrorHandler("Hook11920_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sOrderNo.Declare(String)
+V.Local.sSql.Declare(String)
+V.Local.sMsg.Declare(String)
+V.Local.iReturn.Declare(Long)
+
+F.Intrinsic.Control.If(V.Passed.000003,<>,"")
+	'Getting Order number from screen
+	F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sOrderNo)
+
+
+	'check to see if Pick List has printed before
+	F.Intrinsic.String.Build("SELECT FLAG_PICKLIST FROM ORDER_HEADER WHERE ORDER_NO = '{0}' AND RECORD_TYPE = 'A' ",V.Local.sOrderNo,V.Local.sSql)
+	F.ODBC.Connection!con.OpenLocalRecordsetRW("rst",V.Local.sSql)
+	F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+		'check to see the print status
+		F.Intrinsic.Control.If(V.ODBC.con!rst.FieldValTrim!FLAG_PICKLIST,=,"Y")
+			'has been printed before, ask if they would like to reprint.
+			F.Intrinsic.String.Build("Order {0} has been sent to shipping before.{1}Would you like to send a pick list to shipping again?",V.Local.sOrderNo,V.Ambient.NewLine,V.Local.sMsg)
+		F.Intrinsic.Control.Else
+			'has not been sent before, ask to print
+			F.Intrinsic.String.Build("Order {0} has NOT been sent to shipping!{1}Would you like to send a pick list to shipping?",V.Local.sOrderNo,V.Ambient.NewLine,V.Local.sMsg)
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.EndIf
+
+
+	F.Intrinsic.UI.Msgbox(V.Local.sMsg,"Pick List Print",4,V.Local.iReturn)
+	F.Intrinsic.Control.If(V.Local.iReturn,=,6)
+		'yes ship so set flag to N so it will be printed
+		F.ODBC.con!rst.Set!FLAG_PICKLIST("N")
+		F.ODBC.con!rst.Update
+		'build picklist setting for line too
+		F.Intrinsic.String.Build("SELECT PICK_LIST_PRINTED FROM ORDER_LINES WHERE ORDER_NO = '{0}' AND RECORD_TYPE = 'L' ",V.Local.sOrderNo,V.Local.sSql)
+		F.ODBC.Connection!con.OpenLocalRecordsetRW("rstLines",V.Local.sSql)
+		F.Intrinsic.Control.DoUntil(V.ODBC.con!rstLines.EOF,=,True)
+			F.ODBC.con!rstLines.Set!PICK_LIST_PRINTED("N")
+			F.ODBC.con!rstLines.Update
+			F.ODBC.con!rstLines.MoveNext
+		F.Intrinsic.Control.Loop
+		F.ODBC.con!rstLines.Close
+	F.Intrinsic.Control.EndIf
+	F.ODBC.con!rst.Close
+
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook11920_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Hook11920.End
+
+Program.Sub.Hook11869.Start
+F.Intrinsic.Control.SetErrorHandler("Hook11869_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sCarrier.Declare(String)
+V.Local.sAccount.Declare(String)
+V.Local.sOrderNo.Declare(String)
+V.Local.sSql.Declare(String)
+V.Local.sCustomer.Declare(String)
+V.Local.sShipTo.Declare(String)
+V.Local.sZipCode.Declare(String)
+V.Local.sRegion.Declare(String)
+V.Local.sCarrierNumber.Declare(String)
+V.Local.iRegion.Declare(Long)
+V.Local.ireturn.Declare(Long)
+v.Local.smsg.Declare(string)
+
+'Getting Customer, Ship To ID, Zip Code, Carrier and Account from Order header screen
+V.Local.sCustomer.Set(V.Passed.000006.Trim)
+V.Local.sShipTo.Set(V.Passed.000061.Trim)
+V.Local.sZipCode.Set(V.Passed.000018.Trim)
+V.Local.sCarrier.Set(V.Passed.000094.Trim)
+V.Local.sAccount.Set(V.Passed.000165.Trim)
+'Getting Order number from screen
+F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sOrderNo)
+'Used below in the territory search that was in the sales override script
+V.Local.iRegion.Set(-1)
+F.Intrinsic.String.Left(V.Local.sZipCode,5,V.Local.sZipCode)
+
+'Formerly ATG_OE_Carrier_Checks
+'Checking to see if Carrier requires validation on account number
+F.Intrinsic.String.Build("Select CARRIER, COMPANY from GCG_Carrier_Check where CARRIER = '{0}'",V.Local.sCarrier,V.Local.sSql)
+F.ODBC.Connection!con.OpenLocalRecordsetRO("rst",V.Local.sSql)
+F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+	'Checking to be sure Account is not blank
+	F.Intrinsic.Control.If(V.Local.sAccount,=,"")
+		V.Passed.777777.Set(1)
+		F.Intrinsic.UI.Msgbox("Carrier Account cannot be blank.","Carrier Validation")
+		F.ODBC.con!rst.Close
+		F.Intrinsic.Control.CallSub(Unload)
+	F.Intrinsic.Control.Else
+		'Check to see if UPS or Fedex and making sure Account number is formatted correctly, 0 - FedEx, 1 - UPS
+		F.Intrinsic.Control.If(V.ODBC.con!rst.FieldValLong!COMPANY,=,0)
+			'Fedex
+			F.Intrinsic.Control.If(V.Local.sAccount.Length,<>,9)
+				V.Passed.777777.Set(1)
+				F.Intrinsic.UI.Msgbox("Carrier Account must be 9 digits for FedEx.","Carrier Validation")
+				F.ODBC.con!rst.Close
+				F.Intrinsic.Control.CallSub(Unload)
+			F.Intrinsic.Control.EndIf
+		F.Intrinsic.Control.Else
+			'UPS
+			F.Intrinsic.Control.If(V.Local.sAccount.Length,<>,6)
+				V.Passed.777777.Set(1)
+				F.Intrinsic.UI.Msgbox("Carrier Account must be 6 digits for UPS.","Carrier Validation")
+				F.ODBC.con!rst.Close
+				F.Intrinsic.Control.CallSub(Unload)
+			F.Intrinsic.Control.EndIf
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndIf
+F.ODBC.con!rst.Close
+
+'added to test a business logic change for randy
+v.Local.stestsql.Declare(string)
+
+'Checking to see if there is a ship to override
+F.Intrinsic.Control.If(V.Local.iRegion,=,-1)
+	F.Intrinsic.String.Build("Select OVERRIDE_REGION From ATG_SHIPTO_EXCEPT where Cust = '{0}' and ShipTo = '{1}' and Active = 1",V.Local.sCustomer,V.Local.sShipTo,V.Local.sSql)
+	F.ODBC.Connection!con.OpenLocalRecordsetRO("rst",V.Local.sSql)
+	F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+		V.Local.iRegion.Set(V.ODBC.con!rst.FieldValLong!OVERRIDE_REGION)
+	f.Intrinsic.Control.Else
+		F.Intrinsic.String.Build("Select OVERRIDE_REGION from ATG_BILLTO_EXCEPT Where Cust = '{0}' and ACTIVE = 1",V.Local.sCustomer,V.Local.stestSql)
+		F.ODBC.Connection!con.OpenLocalRecordsetRO("rst2",V.Local.stestSql)
+		F.Intrinsic.Control.If(V.ODBC.con!rst2.EOF,=,False)
+			V.Local.iRegion.Set(V.ODBC.con!rst2.FieldValLong!OVERRIDE_REGION)
+		F.Intrinsic.Control.EndIf
+		F.ODBC.con!rst2.Close		
+	F.Intrinsic.Control.EndIf
+	F.ODBC.con!rst.Close
+F.Intrinsic.Control.EndIf
+
+'Formerly MAF_SalesOverride_V1.gas
+'Check to see if there is a Bill To exception
+'F.Intrinsic.String.Build("Select OVERRIDE_REGION from ATG_BILLTO_EXCEPT Where Cust = '{0}' and ACTIVE = 1",V.Local.sCustomer,V.Local.sSql)
+'F.ODBC.Connection!con.OpenLocalRecordsetRO("rst",V.Local.sSql)
+'F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+'	V.Local.iRegion.Set(V.ODBC.con!rst.FieldValLong!OVERRIDE_REGION)
+'F.Intrinsic.Control.EndIf
+'F.ODBC.con!rst.Close
+
+''Checking to see if there is a ship to override
+'F.Intrinsic.Control.If(V.Local.iRegion,=,-1)
+'	F.Intrinsic.String.Build("Select OVERRIDE_REGION From ATG_SHIPTO_EXCEPT where Cust = '{0}' and ShipTo = '{1}' and Active = 1",V.Local.sCustomer,V.Local.sShipTo,V.Local.sSql)
+'	F.ODBC.Connection!con.OpenLocalRecordsetRO("rst",V.Local.sSql)
+'	F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+'		V.Local.iRegion.Set(V.ODBC.con!rst.FieldValLong!OVERRIDE_REGION)
+'	F.Intrinsic.Control.EndIf
+'	F.ODBC.con!rst.Close
+'F.Intrinsic.Control.EndIf
+
+
+
+'Didn't find an exception so going to try and find region
+F.Intrinsic.Control.If(V.Local.iRegion,=,-1)
+	F.Intrinsic.String.Build("Select TOP 1 ID from ATG_ZIP where ZIP = '{0}'",V.Local.sZipCode,V.Local.sSql)
+	F.ODBC.Connection!con.OpenLocalRecordsetRO("rst",V.Local.sSql)
+	F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+		F.Intrinsic.String.Build("Select REGION from ATG_SALES_TERRITORY Where ZIP_ID = {0}",V.ODBC.con!rst.FieldValLong!ID,V.Local.sSql)
+		F.ODBC.Connection!con.OpenLocalRecordsetRO("rstS",V.Local.sSql)
+		F.Intrinsic.Control.If(V.ODBC.con!rstS.EOF,=,False)
+			V.Local.iRegion.Set(V.ODBC.con!rstS.FieldValLong!REGION)	
+		F.Intrinsic.Control.EndIf
+		F.ODBC.con!rstS.Close
+	F.Intrinsic.Control.EndIf
+	F.ODBC.con!rst.Close
+F.Intrinsic.Control.EndIf
+
+'If a new region was found in any of that above, then changing salesperson on order header to region id
+F.Intrinsic.Control.If(V.Local.iRegion,<>,-1)
+
+	F.Intrinsic.String.Format(V.Local.iRegion.String,"00",V.Local.sRegion)
+
+	F.Intrinsic.String.Build("Select Salesperson from SALESPEOPLE where SALESPERSON_CODE = '{0}' and KEY1 = 'AR' and KEY2 = 'SLM'",V.Local.sRegion,V.Local.sSql)
+	F.ODBC.Connection!con.OpenLocalRecordsetRO("rst",V.Local.sSql)
+	F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+		V.Passed.000030.Set(V.ODBC.con!rst.FieldVal!Salesperson)
+	F.Intrinsic.Control.EndIf
+	F.ODBC.con!rst.Close
+F.Intrinsic.Control.EndIf
+
+'Former MAF_NewSalesAudit
+'Check for new order or copied order.
+F.Intrinsic.Control.If(V.Caller.Switches,=,"N","or",V.Caller.Switches,=,"C")
+	F.Intrinsic.String.Build("Select * From ATG_Sales_Audit Where ORDERNO = '{0}'",V.Local.sOrderNo,V.Local.sSql)
+	F.ODBC.Connection!con.OpenLocalRecordsetRW("rst",V.Local.sSql)
+	F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,True)
+		F.ODBC.con!rst.AddNew
+		F.ODBC.con!rst.Set!OrderNo(V.Local.sOrderNo)
+		F.ODBC.con!rst.Set!GSUser(V.Caller.User)
+		F.ODBC.con!rst.Set!CreateDate(V.Ambient.Now)
+		F.ODBC.con!rst.Update
+	F.Intrinsic.Control.EndIf
+	F.ODBC.con!rst.Close
+F.Intrinsic.Control.EndIf
+
+'addedd for hook 11872
+'Getting Order number from screen
+
+F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sOrderNo)
+
+'Save the Carrier Account # to UF1
+F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sSQL)
+'F.Intrinsic.String.Concat("SELECT * FROM ORDER_HEADER WHERE RECORD_TYPE='A' AND ORDER_NO='",V.Local.sOrderNo,"'",V.Local.sSQL)
+'F.ODBC.Connection!con.OpenRecordsetRW("rst",V.Local.sSQL)
+'F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,<>,True)
+'	V.Local.sCarrierNumber.Set(V.Passed.000216)
+'	F.ODBC.con!rst.Set!USER_1(V.Local.sCarrierNumber)
+'	F.ODBC.con!rst.Update
+'F.Intrinsic.Control.EndIf
+'F.ODBC.con!rst.Close
+''////////////
+
+'ADDED FROM HOOK 11875
+'F.Intrinsic.Control.If(V.Caller.Switches,<>,"D")
+'	'Getting Order number from screen
+'	F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sOrderNo)
+'
+'	'check to see if Pick List has printed before
+'	F.Intrinsic.String.Build("SELECT FLAG_PICKLIST FROM ORDER_HEADER WHERE ORDER_NO = '{0}' AND RECORD_TYPE = 'A' ",V.Local.sOrderNo,V.Local.sSql)
+'	F.ODBC.Connection!con.OpenLocalRecordsetRW("rst",V.Local.sSql)
+'	F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+'		'check to see the print status
+'		F.Intrinsic.Control.If(V.ODBC.con!rst.FieldValTrim!FLAG_PICKLIST,=,"Y")
+'			'has been printed before, ask if they would like to reprint.
+'			F.Intrinsic.String.Build("Order {0} has been sent to shipping before.{1}Would you like to send a pick list to shipping again?",V.Local.sOrderNo,V.Ambient.NewLine,V.Local.sMsg)
+'		F.Intrinsic.Control.Else
+'			'has not been sent before, ask to print
+'			F.Intrinsic.String.Build("Order {0} has NOT been sent to shipping!{1}Would you like to send a pick list to shipping?",V.Local.sOrderNo,V.Ambient.NewLine,V.Local.sMsg)
+'		F.Intrinsic.Control.EndIf
+'	F.Intrinsic.Control.EndIf
+'
+'	F.Intrinsic.UI.Msgbox(V.Local.sMsg,"Pick List Print",4,V.Local.iReturn)
+'		F.Intrinsic.Control.If(V.Local.iReturn,=,6)
+'			'yes ship so set flag to N so it will be printed
+'			F.ODBC.con!rst.Set!FLAG_PICKLIST("N")
+'			F.ODBC.con!rst.Update
+'			'build picklist setting for line too
+'			F.Intrinsic.String.Build("SELECT PICK_LIST_PRINTED FROM ORDER_LINES WHERE ORDER_NO = '{0}' AND RECORD_TYPE = 'L' ",V.Local.sOrderNo,V.Local.sSql)
+'			F.ODBC.Connection!con.OpenLocalRecordsetRW("rstLines",V.Local.sSql)
+'			F.Intrinsic.Control.DoUntil(V.ODBC.con!rstLines.EOF,=,True)
+'				F.ODBC.con!rstLines.Set!PICK_LIST_PRINTED("N")
+'				F.ODBC.con!rstLines.Update
+'				F.ODBC.con!rstLines.MoveNext
+'			F.Intrinsic.Control.Loop
+'			F.ODBC.con!rstLines.Close
+'		F.Intrinsic.Control.EndIf
+'	F.ODBC.con!rst.Close
+'F.Intrinsic.Control.EndIf
+'//////
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook11869_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Unload)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.Hook11869.End
+
+Program.Sub.Hook11872.Start
+F.Intrinsic.Control.SetErrorHandler("Hook11872_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+v.Local.sorderno.Declare(string)
+v.local.ssql.declare(String)
+v.Local.scarriernumber.Declare(string)
+
+F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sOrderNo)
+
+'Save the Carrier Account # to UF1
+F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sSQL)
+F.Intrinsic.String.Concat("SELECT * FROM ORDER_HEADER WHERE RECORD_TYPE='A' AND ORDER_NO='",V.Local.sOrderNo,"'",V.Local.sSQL)
+F.ODBC.Connection!con.OpenRecordsetRW("rst",V.Local.sSQL)
+F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,<>,True)
+	V.Local.sCarrierNumber.Set(V.Passed.000165)
+	F.ODBC.con!rst.Set!USER_1(V.Local.sCarrierNumber)
+	F.ODBC.con!rst.Update
+F.Intrinsic.Control.EndIf
+F.ODBC.con!rst.Close
+
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook11872_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Hook11872.End
+
+Program.Sub.Hook11875.Start
+F.Intrinsic.Control.SetErrorHandler("Hook11875_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+v.Local.sOrderNo.Declare(string)
+v.Local.sSQL.Declare(string)
+v.Local.sMsg.Declare(string)
+v.Local.iReturn.Declare(long)
+
+F.Intrinsic.Control.If(V.Caller.Switches,<>,"D")
+	'Getting Order number from screen
+	F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sOrderNo)
+
+	'check to see if Pick List has printed before
+	F.Intrinsic.String.Build("SELECT FLAG_PICKLIST FROM ORDER_HEADER WHERE ORDER_NO = '{0}' AND RECORD_TYPE = 'A' ",V.Local.sOrderNo,V.Local.sSql)
+	F.ODBC.Connection!con.OpenLocalRecordsetRW("rst",V.Local.sSql)
+	F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+		'check to see the print status
+		F.Intrinsic.Control.If(V.ODBC.con!rst.FieldValTrim!FLAG_PICKLIST,=,"Y")
+			'has been printed before, ask if they would like to reprint.
+			F.Intrinsic.String.Build("Order {0} has been sent to shipping before.{1}Would you like to send a pick list to shipping again?",V.Local.sOrderNo,V.Ambient.NewLine,V.Local.sMsg)
+		F.Intrinsic.Control.Else
+			'has not been sent before, ask to print
+			F.Intrinsic.String.Build("Order {0} has NOT been sent to shipping!{1}Would you like to send a pick list to shipping?",V.Local.sOrderNo,V.Ambient.NewLine,V.Local.sMsg)
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.EndIf
+
+	F.Intrinsic.UI.Msgbox(V.Local.sMsg,"Pick List Print",4,V.Local.iReturn)
+		F.Intrinsic.Control.If(V.Local.iReturn,=,6)
+			'yes ship so set flag to N so it will be printed
+			F.ODBC.con!rst.Set!FLAG_PICKLIST("N")
+			F.ODBC.con!rst.Update
+			'build picklist setting for line too
+			F.Intrinsic.String.Build("SELECT PICK_LIST_PRINTED FROM ORDER_LINES WHERE ORDER_NO = '{0}' AND RECORD_TYPE = 'L' ",V.Local.sOrderNo,V.Local.sSql)
+			F.ODBC.Connection!con.OpenLocalRecordsetRW("rstLines",V.Local.sSql)
+			F.Intrinsic.Control.DoUntil(V.ODBC.con!rstLines.EOF,=,True)
+				F.ODBC.con!rstLines.Set!PICK_LIST_PRINTED("N")
+				F.ODBC.con!rstLines.Update
+				F.ODBC.con!rstLines.MoveNext
+			F.Intrinsic.Control.Loop
+			F.ODBC.con!rstLines.Close
+		F.Intrinsic.Control.EndIf
+	F.ODBC.con!rst.Close
+F.Intrinsic.Control.EndIf
+
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Hook11875_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_Consolidated.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub(unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Hook11875.End
+
+Program.Sub.Comments.Start
+${$0$}$GCG_MAF_Consolidated$}$MITCH$}$2/23/2016$}$False
+${$1$}$$}$$}$8$}$14080$}$INS500-SCRIPT2-BUTN-HOOK$}$2/26/2016 1:13:51 PM$}$(Program: INV500GI?; Screen: INS500)
+
+${$1$}$$}$$}$7$}$14045$}$INS500-POPULATE-HOOK$}$2/26/2016 1:11:50 PM$}$(Program: INV500GI?; Screen: INS500)
+
+${$1$}$$}$$}$6$}$12420$}$OES0201I-SCRIPT-2-HOOK$}$2/26/2016 1:11:35 PM$}$(Program: ORD201; Screen: OES0201I)
+
+${$1$}$$}$$}$5$}$12010$}$OES0201I-POPULATE-HOOK$}$2/26/2016 1:11:16 PM$}$(Program: ORD201; Screen: OES0201I)
+
+${$1$}$$}$$}$4$}$11900$}$Pre Exit Hook$}$2/26/2016 1:10:52 PM$}$(Program: ORD200; Screen: OES0200A)
+
+${$1$}$$}$$}$3$}$11890$}$OES0200A-PRINT-BTN-HOOK$}$2/26/2016 1:10:33 PM$}$(Program: ORD200; Screen: OES0200A)
+
+${$1$}$$}$$}$2$}$11872$}$Post-Save Hook$}$2/26/2016 1:10:13 PM$}$(Program: ORD200; Screen: OES0200A)
+
+${$1$}$$}$$}$1$}$11870$}$Pre-Save Hook$}$2/24/2016 9:55:07 AM$}$(Program: ORD200; Screen: OES0200A)
+
+${$1$}$$}$$}$0$}$11560$}$OES0200A-POPULATE-HOOK$}$2/23/2016 1:30:48 PM$}$(Program: ORD200; Screen: OES0200A)
+
+${$3$}$0$}$$}$0$}$-1$}$$}$12:00:00 AM$}$This will be a custom GAB script that will run from a custom Menu Item under Bill of Material -> File -> Custom Cobalt BOM Import.  The user will navigate to the xml file that needs to be loaded into Global Shop.  Once the xml is parsed there will be a search in Global Shop to see if a BOM already exists for that Part Number.  If one already exists a compare screen will display showing the differences between the two.  If one does not exist then the screen will display the BOM as it will be uploaded into Global Shop.  Any parts that are listed in the BOM that are not Inventory Parts will be highlighted in Yellow.  If there are any parts not in inventory the user will have the option to click the create Parts button to generate those parts in Global Shop.  If the BOM exists in Global shop then any differences on the new import will be highlighted in Red.  After the Parts have been created then the Upload button will upload and override any previous BOM for that part.
+Program.Sub.Comments.End
+
