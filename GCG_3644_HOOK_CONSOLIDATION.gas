@@ -1,0 +1,35 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Setting Script 2 from GCG_3640_RightFax.gas
+V.Passed.000202.Set("Fax Files")
+'disabling dates from AJG_OE_TABSTOPS.gas
+F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000023,"LOCK",1)
+F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000024,"LOCK",1)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3644_HOOK_CONSOLIDATION.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Main.End
+
+Program.Sub.Comments.Start
+${$0$}$testscriptgcg$}$SS1$}$6/6/2016
+Program.Sub.Comments.End
+
