@@ -1,0 +1,114 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+V.Local.sError.Declare(String)
+
+'this program runs on the task scheduler and checks to see if any Orders have Flag_ShipList set to N. If they do then it prints them and sleeps for a minutes and does it again.
+'The program will kill itself at 11:00 pm and be restarted by the task scheduler at 12:00AM
+'using callwrapper 910200 to print pick list passing it Order Number
+'report is 71
+
+V.Local.sSQL.Declare(String)
+V.Local.sParam.Declare(String)
+V.Local.sPName.Declare(String)
+V.Local.sPValue.Declare(String)
+V.Local.iNow.Declare(Long)
+V.Local.iEnd.Declare(Long)
+
+V.Local.iEnd.Set(23)
+
+F.Intrinsic.UI.InvokeWaitDialog("Ship Picklist is running","Ship Picklist")
+
+F.Intrinsic.Control.Do
+	F.ODBC.Connection!Con.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass, 100)
+
+	F.ODBC.Connection!Con.OpenLocalRecordsetRO("rst","SELECT ORDER_NO, FLAG_PICKLIST FROM V_ORDER_HEADER WHERE FLAG_PICKLIST = 'N' ")
+	F.ODBC.Connection!Con.OpenLocalRecordsetRO("rstPrint","SELECT PRINTER FROM GCG_3644_PRINTER ")
+	F.Intrinsic.Control.DoUntil(V.ODBC.Con!rst.EOF,=,True)
+		F.Intrinsic.UI.ChangeWaitStatus("Printing in process")
+		'print pick list
+		F.Intrinsic.String.Build("{0}!*!{0}!*!N!*!{1}!*!{2}!*!Y",V.ODBC.Con!rst.FieldValTrim!ORDER_NO,v.Ambient.Date.PervasiveDate,"1900-01-01",V.Local.sParam)
+		F.Global.General.CallWrapperSyncBIO(910200,V.Local.sParam)
+		
+		F.Intrinsic.String.Build("UPDATE ORDER_HEADER SET FLAG_PICKLIST = 'Y' WHERE ORDER_NO = '{0}' AND RECORD_NO = '  A' ",V.ODBC.Con!rst.FieldValTrim!ORDER_NO,V.Local.sSQL)
+		F.ODBC.Connection!Con.Execute(V.Local.sSQL)
+		F.Intrinsic.String.Build("UPDATE ORDER_LINES SET PICK_LIST_PRINTED = 'Y' WHERE ORDER_NO = '{0}' AND RECORD_TYPE = 'L' ",V.ODBC.Con!rst.FieldValTrim!ORDER_NO,V.Local.sSQL)
+		F.ODBC.Connection!Con.Execute(V.Local.sSQL)
+
+		'create print paramaters
+		F.Intrinsic.String.Split("Terminal*!*Rptid*!*AreaBr*!*SerLot*!*Frac*!*Decimal*!*Program*!*ExclBin","*!*",V.Local.sPName)
+		'create print param values
+		F.Intrinsic.String.Build("{0}*!*000071*!* *!* *!* *!* *!*ORD055-000071-{0}*!* ",V.Caller.Terminal,V.Local.sPValue)
+		F.Intrinsic.String.Split(V.Local.sPValue,"*!*",V.Local.sPValue)
+		'print report 71
+		F.Global.BI.PrintReport(71,8,V.Local.sPName,V.Local.sPValue,V.ODBC.Con!rstPrint.FieldValTrim!PRINTER,False)
+		'callwrapper automaticlaly sets Flag picklist to Y when it is called. No need to set it myself.
+		F.Intrinsic.UI.Sleep(20)
+		'Delete BI_SHIP_PICK for the next print
+		F.Intrinsic.String.Build("DELETE FROM BI_SHIP_PICK WHERE TRMNL = '{0}' AND ORDER_NO = '{1}' ",V.Caller.Terminal,V.ODBC.Con!rst.FieldValTrim!ORDER_NO,V.Local.sSQL)
+		F.ODBC.Connection!Con.Execute(V.Local.sSQL)
+
+		F.ODBC.Con!rst.MoveNext
+	F.Intrinsic.Control.Loop
+	
+	F.Intrinsic.UI.ChangeWaitStatus("Finished looking for Prints")
+	F.ODBC.Con!rstPrint.Close
+	F.ODBC.Con!rst.Close
+	F.ODBC.Connection!Con.Close
+
+	'check the time and see if it is greater than 11:00. if ti is then close the program. if not then sleep for a minute and start again.
+	F.Intrinsic.Date.Hour(V.Ambient.Time,V.Local.iNow)
+
+	F.Intrinsic.Control.If(V.Local.iNow,>=,V.Local.iEnd)
+		F.Intrinsic.UI.CloseWaitDialog
+		F.Intrinsic.Control.End
+	F.Intrinsic.Control.Else
+		F.Intrinsic.UI.ChangeWaitStatus("Sleeping for 60 seconds")
+		F.Intrinsic.UI.Sleep(60)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.Loop
+
+
+F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.String.Build("Error {0} ocurred with description: {1}",V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Control.CallSub(WriteErrorAndRestart,"Error",V.Local.sError)
+F.Intrinsic.Control.EndIf
+Program.Sub.Main.End
+
+Program.Sub.WriteErrorAndRestart.Start
+V.Local.sFilePath.Declare(String)
+V.Local.sFileContent.Declare(String)
+V.Local.bFileExists.Declare(Boolean)
+V.Local.sScriptPath.Declare(String)
+V.Local.iPID.Declare(Long)
+
+F.Intrinsic.String.Build("{0}\3644_Ship_Picklist.err",V.Caller.GasDir,V.Local.sFilePath)
+F.Intrinsic.File.Exists(V.Local.sFilePath,V.Local.bFileExists)
+
+F.Intrinsic.String.Build("{0}. {1}",V.Ambient.Now,V.Args.Error,V.Local.sFileContent)
+
+F.Intrinsic.Control.If(V.Local.bFileExists)
+	F.Intrinsic.File.Append2FileNewLine(V.Local.sFilePath,V.Local.sFileContent)
+F.Intrinsic.Control.Else
+	F.Intrinsic.File.String2File(V.Local.sFilePath,V.Local.sFileContent)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("{0}\GCG_3644_SHIP_PICKLIST.gas",V.Ambient.ScriptPath,V.Local.sScriptPath)
+F.Global.General.CallAsyncGAS(V.Local.sScriptPath,V.Local.iPID)
+
+F.Intrinsic.Control.End
+Program.Sub.WriteErrorAndRestart.End
+
+Program.Sub.Comments.Start
+${$0$}$GCG_MAF_SHIP_PICKLIST_NEW$}$SS1$}$3/16/2016
+Program.Sub.Comments.End
+
