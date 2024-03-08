@@ -1,0 +1,5 @@
+CREATE TABLE "ATG_SALES_AUDIT"(
+ "OrderNo" CHAR(7) NOT NULL ,
+ "GSUser" CHAR(8),
+ "CreateDate" DATETIME,
+ PRIMARY KEY ("OrderNo"));
